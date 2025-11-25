@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const notificacionSchema = new mongoose.Schema({
   alerta: {
@@ -27,4 +27,4 @@ const notificacionSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Notificacion', notificacionSchema);
+export default mongoose.model('Notificacion', notificacionSchema);

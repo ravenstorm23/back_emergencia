@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const contactoSchema = new mongoose.Schema({
   usuario_mayor: {
@@ -22,4 +22,4 @@ const contactoSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Contacto', contactoSchema);
+export default mongoose.model('Contacto', contactoSchema);
