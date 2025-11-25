@@ -52,6 +52,17 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true // permite que solo algunos usuarios tengan código
   },
+  // Configuración de alertas y notificaciones
+  configuracion_alertas: {
+    notificaciones_push: { type: Boolean, default: true },
+    notificaciones_email: { type: Boolean, default: true },
+    notificaciones_sms: { type: Boolean, default: false },
+    alertas_emergencia: { type: Boolean, default: true },
+    alertas_medicamentos: { type: Boolean, default: true },
+    alertas_citas: { type: Boolean, default: true },
+    sonido_activado: { type: Boolean, default: true },
+    vibracion_activada: { type: Boolean, default: true }
+  },
   // Vinculaciones (puede haber 0-n)
   vinculaciones: {
     type: [VinculacionSchema],

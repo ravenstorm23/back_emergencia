@@ -120,3 +120,52 @@ export const obtenerCodigo = async (req, res) => {
         res.status(500).json({ msg: "Error al obtener código", error: error.message });
     }
 };
+
+export const obtenerCuidadoresVinculados = async (req, res) => {
+    try {
+        const user = await Usuario.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ msg: "Usuario no encontrado" });
+        }
+
+        if (user.rol !== "adulto mayor") {
+            return res.status(403).json({ msg: "Solo adultos mayores pueden ver sus cuidadores vinculados" });
+        }
+
+        if (!user.codigo_vinculacion) {
+            return res.status(200).json({
+                msg: "No tienes cuidadores vinculados aún",
+                cuidadores: []
+            });
+        }
+
+        // Buscar vinculaciones usando el código del adulto mayor
+        const Vinculacion = (await import('../models/Vinculacion.js')).default;
+        const vinculaciones = await Vinculacion.find({
+            codigo_adulto_mayor: user.codigo_vinculacion
+        }).populate('cuidadorId', 'nombre email telefono');
+
+        const cuidadores = vinculaciones.map(vinc => ({
+            id: vinc.cuidadorId._id,
+            nombre: vinc.cuidadorId.nombre,
+            email: vinc.cuidadorId.email,
+            telefono: vinc.cuidadorId.telefono,
+            tipo_relacion: vinc.tipo_relacion,
+            es_contacto_principal: vinc.es_contacto_principal,
+            permisos: {
+                puede_ver_ubicacion: vinc.puede_ver_ubicacion,
+                puede_recibir_alertas: vinc.puede_recibir_alertas,
+                puede_gestionar_medicamentos: vinc.puede_gestionar_medicamentos
+            },
+            fecha_vinculacion: vinc.createdAt
+        }));
+
+        res.status(200).json({
+            cuidadores,
+            total: cuidadores.length
+        });
+    } catch (error) {
+        console.error("Error al obtener cuidadores:", error);
+        res.status(500).json({ msg: "Error al obtener cuidadores vinculados", error: error.message });
+    }
+};
