@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const vinculacionSchema = new mongoose.Schema({
   cuidadorId: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario", required: true },
+  pacienteId: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
   codigo_adulto_mayor: { type: String, required: true },
   tipo_relacion: { type: String, required: true },
   es_contacto_principal: { type: Boolean, default: false },

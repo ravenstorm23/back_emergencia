@@ -13,7 +13,7 @@ const actividadSchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: ["medicamento", "cita", "revision", "otro"],
+    enum: ["medicamento", "cita", "revision", "visita", "tarea", "emergencia", "otro"],
     required: true,
   },
   titulo: {

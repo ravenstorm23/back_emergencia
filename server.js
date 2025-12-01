@@ -11,6 +11,9 @@ import vinculacionRoutes from './src/Routes/vinculacionRoutes.js';
 import actividadesRoutes from './src/Routes/actividades.js';
 import perfilMayorRoutes from "./src/Routes/perfilMayor.js";
 import alertasRoutes from './src/Routes/alertasRoutes.js';
+import reportesRoutes from './src/Routes/reportesRoutes.js';
+import notificacionesRoutes from './src/Routes/notificacionesRoutes.js';
+import mensajesRoutes from './src/routes/mensajesRoutes.js';
 import { errorHandler, notFound } from './src/middlewares/errorHandler.js';
 
 
@@ -36,6 +39,9 @@ app.use('/api/vincular', vinculacionRoutes);
 app.use('/api/actividades', actividadesRoutes);
 app.use("/api/perfil-mayor", perfilMayorRoutes);
 app.use('/api/alertas', alertasRoutes);
+app.use('/api/reportes', reportesRoutes);
+app.use('/api/notificaciones', notificacionesRoutes);
+app.use('/api/mensajes', mensajesRoutes);
 
 // Middleware de manejo de errores (debe ir al final)
 app.use(notFound);

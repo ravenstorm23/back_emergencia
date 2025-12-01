@@ -51,7 +51,8 @@ export const crearVinculacion = async (req, res) => {
             puede_ver_ubicacion: puede_ver_ubicacion !== undefined ? puede_ver_ubicacion : true,
             puede_recibir_alertas: puede_recibir_alertas !== undefined ? puede_recibir_alertas : true,
             puede_gestionar_medicamentos: puede_gestionar_medicamentos || false,
-            notas: notas || ""
+            notas: notas || "",
+            pacienteId: adultoMayor._id
         });
 
         await nuevaVinculacion.save();
@@ -72,6 +73,7 @@ export const crearVinculacion = async (req, res) => {
 export const obtenerVinculaciones = async (req, res) => {
     try {
         const vinculaciones = await Vinculacion.find({ cuidadorId: req.user.id })
+            .populate('pacienteId', 'nombre email telefono direccion')
             .sort({ createdAt: -1 });
 
         res.json(vinculaciones);

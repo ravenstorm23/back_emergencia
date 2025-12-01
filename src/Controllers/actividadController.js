@@ -61,3 +61,35 @@ export const eliminarActividad = async (req, res) => {
         res.status(500).json({ msg: "Error al eliminar la actividad", error: error.message });
     }
 };
+export const actualizarActividad = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { tipo, titulo, descripcion, fechaHora, recordatorio, duracion, prioridad, estado } = req.body;
+
+        let actividad = await Actividad.findById(id);
+
+        if (!actividad) {
+            return res.status(404).json({ msg: "Actividad no encontrada" });
+        }
+
+        if (actividad.cuidadorId.toString() !== req.user.id) {
+            return res.status(403).json({ msg: "No autorizado para editar esta actividad" });
+        }
+
+        actividad.tipo = tipo || actividad.tipo;
+        actividad.titulo = titulo || actividad.titulo;
+        actividad.descripcion = descripcion || actividad.descripcion;
+        actividad.fechaHora = fechaHora || actividad.fechaHora;
+        actividad.recordatorio = recordatorio !== undefined ? recordatorio : actividad.recordatorio;
+        actividad.duracion = duracion || actividad.duracion;
+        actividad.prioridad = prioridad || actividad.prioridad;
+        actividad.estado = estado || actividad.estado;
+        actividad.actualizadoEn = Date.now();
+
+        await actividad.save();
+        res.json({ msg: "Actividad actualizada con éxito", actividad });
+    } catch (error) {
+        console.error("Error al actualizar actividad:", error);
+        res.status(500).json({ msg: "Error al actualizar la actividad", error: error.message });
+    }
+};
