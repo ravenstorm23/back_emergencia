@@ -46,6 +46,24 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  // Información médica (principalmente para adultos mayores)
+  medicamentos: {
+    type: [String],
+    default: []
+  },
+  enfermedades: {
+    type: [String],
+    default: []
+  },
+  // Contacto de emergencia
+  nombreFamiliar: {
+    type: String,
+    required: false
+  },
+  telefonoFamiliar: {
+    type: String,
+    required: false
+  },
   // Código único para que cuidadores se vinculen (solo para adultos mayores)
   codigo_vinculacion: {
     type: String,
