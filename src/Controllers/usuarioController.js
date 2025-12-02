@@ -45,6 +45,11 @@ export const actualizarUsuario = async (req, res) => {
             return res.status(404).json({ msg: 'Usuario no encontrado' });
         }
 
+        // Validar que el usuario solo pueda actualizar su propio perfil
+        if (req.user.id !== req.params.id) {
+            return res.status(403).json({ msg: 'Acción no permitida. Solo puedes actualizar tu propio perfil.' });
+        }
+
         // Actualizar solo los campos que se enviaron
         if (nombre !== undefined) usuario.nombre = nombre;
         if (telefono !== undefined) usuario.telefono = telefono;

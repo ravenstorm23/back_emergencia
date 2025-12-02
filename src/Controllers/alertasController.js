@@ -3,7 +3,10 @@ import Usuario from '../models/Usuario.js';
 // Configuración de alertas por usuario
 export const obtenerConfiguracionAlertas = async (req, res) => {
     try {
-        const user = await Usuario.findById(req.user.id);
+        // Si se pasa un ID en la ruta, usarlo; de lo contrario, usar el usuario autenticado
+        const userId = req.params.id || req.user.id;
+
+        const user = await Usuario.findById(userId);
         if (!user) {
             return res.status(404).json({ msg: "Usuario no encontrado" });
         }

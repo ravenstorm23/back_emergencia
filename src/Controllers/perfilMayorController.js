@@ -143,13 +143,14 @@ export const obtenerCuidadoresVinculados = async (req, res) => {
         const Vinculacion = (await import('../models/Vinculacion.js')).default;
         const vinculaciones = await Vinculacion.find({
             codigo_adulto_mayor: user.codigo_vinculacion
-        }).populate('cuidadorId', 'nombre email telefono');
+        }).populate('cuidadorId', 'nombre email telefono direccion');
 
         const cuidadores = vinculaciones.map(vinc => ({
             id: vinc.cuidadorId._id,
             nombre: vinc.cuidadorId.nombre,
             email: vinc.cuidadorId.email,
             telefono: vinc.cuidadorId.telefono,
+            direccion: vinc.cuidadorId.direccion,
             tipo_relacion: vinc.tipo_relacion,
             es_contacto_principal: vinc.es_contacto_principal,
             permisos: {

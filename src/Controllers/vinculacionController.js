@@ -17,6 +17,15 @@ export const crearVinculacion = async (req, res) => {
             return res.status(400).json({ msg: "codigo_adulto_mayor y tipo_relacion son campos obligatorios" });
         }
 
+        // Validar que solo los cuidadores pueden vincular
+        const usuarioSolicitante = await Usuario.findById(req.user.id);
+        if (usuarioSolicitante.rol !== 'cuidador') {
+            return res.status(403).json({
+                msg: "Acción no permitida. Solo los cuidadores pueden vincular pacientes.",
+                rol_actual: usuarioSolicitante.rol
+            });
+        }
+
         // Validar que el código existe y pertenece a un adulto mayor
         const adultoMayor = await Usuario.findOne({
             codigo_vinculacion: codigo_adulto_mayor,
@@ -28,6 +37,11 @@ export const crearVinculacion = async (req, res) => {
                 msg: "Código de vinculación inválido o no existe",
                 sugerencia: "Verifica que el adulto mayor haya generado su código correctamente"
             });
+        }
+
+        // Validar que no se esté vinculando a sí mismo
+        if (adultoMayor._id.toString() === req.user.id) {
+            return res.status(400).json({ msg: "No puedes vincularte contigo mismo" });
         }
 
         // Verificar que no exista una vinculación previa
@@ -56,6 +70,23 @@ export const crearVinculacion = async (req, res) => {
         });
 
         await nuevaVinculacion.save();
+
+        // Actualizar usuario cuidador con la nueva vinculación en su perfil
+        await Usuario.findByIdAndUpdate(req.user.id, {
+            $push: {
+                vinculaciones: {
+                    codigo_adulto_mayor,
+                    tipo_relacion,
+                    es_contacto_principal: es_contacto_principal || false,
+                    permisos: {
+                        puede_ver_ubicacion: puede_ver_ubicacion !== undefined ? puede_ver_ubicacion : true,
+                        puede_recibir_alertas: puede_recibir_alertas !== undefined ? puede_recibir_alertas : true,
+                        puede_gestionar_medicamentos: puede_gestionar_medicamentos || false
+                    },
+                    notas: notas || ""
+                }
+            }
+        });
         res.status(201).json({
             msg: "Vinculación registrada con éxito",
             vinculacion: nuevaVinculacion,
@@ -73,7 +104,7 @@ export const crearVinculacion = async (req, res) => {
 export const obtenerVinculaciones = async (req, res) => {
     try {
         const vinculaciones = await Vinculacion.find({ cuidadorId: req.user.id })
-            .populate('pacienteId', 'nombre email telefono direccion')
+            .populate('pacienteId', 'nombre email telefono direccion medicamentos enfermedades')
             .sort({ createdAt: -1 });
 
         res.json(vinculaciones);
